@@ -1,29 +1,62 @@
 <template>
   <div class="container">
-    <Header title="Task Tracker" />
+    <Header
+      title="Task Tracker"
+      @toggle-add-task="toggleAddTask"
+      :showAddTask="showAddTask"
+    />
+    <div v-show="showAddTask">
+      <AddTask @add-task="addTask" />
+    </div>
     <!-- We bind tasks so it updates if the data changes -->
-    <Tasks @delete-task="deleteTask" :tasks="tasks" />
+    <Tasks
+      @toggle-reminder="toggleReminder"
+      @delete-task="deleteTask"
+      :tasks="tasks"
+    />
   </div>
 </template>
 
 <script>
+/* eslint-disable no-confusing-arrow */
+/* eslint-disable function-paren-newline */
+/* eslint-disable comma-dangle */
+/* eslint-disable implicit-arrow-linebreak */
+/* eslint-disable no-alert */
+/* eslint-disable no-restricted-globals */
 import Header from './components/Header.vue';
 import Tasks from './components/Tasks.vue';
+import AddTask from './components/AddTask.vue';
 
 export default {
   name: 'App',
   components: {
     Header,
     Tasks,
+    AddTask,
   },
   data() {
     return {
       tasks: [],
+      showAddTask: false,
     };
   },
   methods: {
+    addTask(task) {
+      this.tasks = [...this.tasks, task];
+    },
     deleteTask(id) {
-      this.tasks = this.tasks.filter((t) => t.id !== id);
+      if (confirm('Are you sure?')) {
+        this.tasks = this.tasks.filter((t) => t.id !== id);
+      }
+    },
+    toggleReminder(id) {
+      this.tasks = this.tasks.map((t) =>
+        t.id === id ? { ...t, reminder: !t.reminder } : t
+      );
+    },
+    toggleAddTask() {
+      this.showAddTask = !this.showAddTask;
     },
   },
   // Kinda like on mount / first render?
